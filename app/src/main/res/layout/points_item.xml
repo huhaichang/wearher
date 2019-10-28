@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_margin="15dp">
+    <TextView
+        android:id="@+id/tv_point"
+        android:layout_weight="3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="XX"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="#ff9878"
+        android:layout_marginLeft="20dp"
+        />
+    <Button
+        android:id="@+id/bt_ok"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="移除"
+
+        />
+
+</LinearLayout>

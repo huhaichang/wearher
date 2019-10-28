@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<litepal>
+    <dbname value="weather3"/>
+    <version value="1"/>
+    <list>
+        <mapping class="com.example.huhaichang.weather3.db.City"/>
+        <mapping class="com.example.huhaichang.weather3.db.Province"/>
+        <mapping class="com.example.huhaichang.weather3.db.County"/>
+        <mapping class="com.example.huhaichang.weather3.gpsdb.Province2"/>
+        <mapping class="com.example.huhaichang.weather3.gpsdb.City2"/>
+        <mapping class="com.example.huhaichang.weather3.gpsdb.County2"/>
+    </list>
+</litepal>
