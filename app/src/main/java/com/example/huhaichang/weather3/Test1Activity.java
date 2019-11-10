@@ -29,9 +29,6 @@ public class Test1Activity extends AppCompatActivity {
         mViewPager = findViewById(R.id.vp_details_top);
         mLLayout = findViewById(R.id.ll_details_top_dot);
         cityName = findViewById(R.id.tv_cityName);
-        fragmentArrayList.add(new CityFragment("beijing"));
-        fragmentArrayList.add(new CityFragment("jimei"));
-        fragmentArrayList.add(new CityFragment("yongding"));
         fragmentManager = getSupportFragmentManager();
         mViewPager.setAdapter(new MFragmentPagerAdapter(fragmentManager, fragmentArrayList));
         for(int i =0;i<fragmentArrayList.size();i++){

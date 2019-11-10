@@ -173,8 +173,8 @@ public class WeatherActivity extends AppCompatActivity {
         mTVCityName.setText(sharedPreferences.getString(""+page+page, ""));
         }
         /**拿给viewpaper的fragment*/
-        //先获取偏移量监听
-       /* handlerfragment = new Handler(){
+        //获取偏移量监听
+        handlerfragment = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
@@ -184,30 +184,30 @@ public class WeatherActivity extends AppCompatActivity {
                         offset = bundle.getInt("offset");
                         if(offset<0) offset=0;
                         cityFragmentlocal.abc(offset);
-                        if(cityFragmenta!=null){cityFragmenta.abc(offset);}
-                        if(cityFragmentb!=null){cityFragmentb.abc(offset);}
-                        if(cityFragmentc!=null){cityFragmentc.abc(offset);}
-                        if(cityFragmentd!=null){cityFragmentd.abc(offset);}
+                        if(cityFragmenta!=null ){cityFragmenta.abc(offset);}
+                        if(cityFragmentb!=null ){cityFragmentb.abc(offset);}
+                        if(cityFragmentc!=null ){cityFragmentc.abc(offset);}
+                        if(cityFragmentd!=null ){cityFragmentd.abc(offset);}
                         break;
                 }
             }
-        };*/
-        cityFragmentlocal = new CityFragment(mWeatherId);
+        };
+        cityFragmentlocal = new CityFragment(mWeatherId,handlerfragment);
         fragmentArrayList.add(cityFragmentlocal);
         if(!sharedPreferences.getString("1","").equals("")) {
-            cityFragmenta = new CityFragment(a);
+            cityFragmenta = new CityFragment(a,handlerfragment);
             fragmentArrayList.add(cityFragmenta);
         }
         if(!sharedPreferences.getString("2","").equals("")) {
-            cityFragmentb = new CityFragment(b);
+            cityFragmentb = new CityFragment(b,handlerfragment);
             fragmentArrayList.add(cityFragmentb);
         }
         if(!sharedPreferences.getString("3","").equals("")) {
-           cityFragmentc = new CityFragment(c);
+           cityFragmentc = new CityFragment(c,handlerfragment);
             fragmentArrayList.add(cityFragmentc);
         }
         if(!sharedPreferences.getString("4","").equals("")) {
-            cityFragmentd = new CityFragment(d);
+            cityFragmentd = new CityFragment(d,handlerfragment);
             fragmentArrayList.add(cityFragmentd);
         }
         fragmentManager = getSupportFragmentManager();

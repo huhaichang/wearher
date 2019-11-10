@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.huhaichang.weather3.gson.Forecast;
 import com.example.huhaichang.weather3.gson.Weather;
+import com.example.huhaichang.weather3.service.MyService;
+import com.example.huhaichang.weather3.widget.MyScrollView;
 import com.example.huhaichang.weather3.widget.OkhttpUtil;
 import com.example.huhaichang.weather3.widget.ToastUtil;
 import com.example.huhaichang.weather3.widget.Utility;
@@ -53,13 +56,14 @@ public class CityFragment extends Fragment {
     private TextView mTVSport;
     private SharedPreferences.Editor mEditor;
     private SharedPreferences mSharedPreferences;
-    public ScrollView msvSync;
+    public MyScrollView msvSync;
     private int offset;
     private Handler handler;
 
   @SuppressLint("ValidFragment")   //handle作为参数
-  public CityFragment(String cityId){
+  public CityFragment(String cityId,Handler handler){
         this.cityId = cityId;
+        this.handler =handler;
   }
 
     @Nullable
@@ -103,60 +107,46 @@ public class CityFragment extends Fragment {
                     swipeRefreshLayout.setRefreshing(false);
                 }
             });
-        /**接收滑动偏移量*/  //等等试下在activity下接受偏移量  设置fragment的msvSync
 
-        handler=new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what){
-                    case 1:
-                        Bundle bundle = msg.getData();
-                        offset = bundle.getInt("offset");
-                        if(offset<0) offset=0;
-                       handler.post(new Runnable() {
-                           @Override
-                           public void run() {
-                               msvSync.scrollTo(0,offset);
-                           }
-                       });
-                        break;
-                }
-            }
-        };
-        /**发送消息 需要全部fragment响应*/ //现在就1个会响应
-        mTVAQI.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {   //把偏移量发送过去处理
-                        Message message = new Message();
-                        message.what=1;
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("offset",300);
-                        message.setData(bundle);
-                        handler.sendMessage(message);
-                    }
-                }).start();
-            }
-        });
-
+     /**滑动接听发送偏移量消息*/
         msvSync.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
             public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 offset=scrollY;
-               /* new Thread(new Runnable() {
+                //有个bug 向上滑动到下拉菜单
+                // 不会执行滑动停止监听 解决如下
+                if(offset<=0){
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {   //把偏移量发送过去处理
+                            Message message = new Message();
+                            message.what=1;
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("offset",offset);
+                            message.setData(bundle);
+                            handler.sendMessage(message);
+                        }
+                    }).start();
+                }
+                //真实情况要实现滑动停止 发消息
+                msvSync.setmListener(new MyScrollView.onFinishedListener() {
                     @Override
-                    public void run() {   //把偏移量发送过去处理
-                        Message message = new Message();
-                        message.what=1;
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("offset",offset);
-                        message.setData(bundle);
-                        handler.sendMessage(message);
+                    public void onFinish(boolean isFinish) {
+                        if(isFinish){
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {   //把偏移量发送过去处理
+                                    Message message = new Message();
+                                    message.what=1;
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt("offset",offset);
+                                    message.setData(bundle);
+                                    handler.sendMessage(message);
+                                }
+                            }).start();
+                        }
                     }
-                }).start();*/
+                });
             }
         });
     }
