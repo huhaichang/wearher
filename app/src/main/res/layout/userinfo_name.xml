@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@+id/tv_test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="性别"
@@ -19,15 +20,34 @@
             android:textColor="#000"
             android:textSize="20sp"
             />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-
-            android:text="男"
-            android:textSize="20sp"
-            android:layout_marginTop="15dp"
-            />
+       <RadioGroup
+           android:id="@+id/rg_sex"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:layout_marginTop="13dp"
+           android:layout_marginLeft="25dp">
+           <RadioButton
+               android:id="@+id/rb_man"
+               android:layout_width="60dp"
+               android:layout_height="30dp"
+               android:text="男"
+               android:background="@drawable/selector_radiobutton"
+               android:button="@null"
+               android:checked="true"
+               android:textSize="18sp"
+               android:gravity="center"/>
+           <RadioButton
+               android:id="@+id/rb_woman"
+               android:button="@null"
+               android:background="@drawable/selector_radiobutton"
+               android:layout_width="60dp"
+               android:layout_height="30dp"
+               android:text="女"
+               android:textSize="18sp"
+               android:gravity="center"
+               android:layout_marginLeft="10dp"/>
+       </RadioGroup>
     </LinearLayout>
 
     <LinearLayout
@@ -45,18 +65,21 @@
             />
         <EditText
             android:id="@+id/et_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:hint="输入你的姓名"
             android:background="@null"
             android:layout_marginLeft="25dp"/>
     </LinearLayout>
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/ll_birth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="10dp"
+        >
         <TextView
+            android:id="@+id/tv_8788"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="生日"
@@ -65,13 +88,23 @@
             android:textColor="#000"
             android:textSize="20sp"
             />
-        <EditText
-            android:id="@+id/et_birth"
+        <TextView
+            android:id="@+id/tv_birth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:hint="填入你的出生年月日"
-            android:background="@null"
-            android:layout_marginLeft="25dp"/>
-    </LinearLayout>
+            android:text="填入你的出生日期"
+            android:textSize="18dp"
+            android:layout_marginLeft="25dp"
+            android:layout_toRightOf="@id/tv_8788"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text=">"
+            android:textSize="25dp"
+            android:layout_marginRight="12dp"
+            android:textColor="#c4c4c4"
+            android:layout_marginTop="15dp" />
+    </RelativeLayout>
 </LinearLayout>

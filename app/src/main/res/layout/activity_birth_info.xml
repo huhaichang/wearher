@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#e6e6e6"
-    android:orientation="vertical"
     >
 
     <RelativeLayout
+        android:id="@+id/rl_8999"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -19,8 +19,8 @@
             android:layout_centerInParent="true"
             android:textColor="#fff"
             android:textSize="20sp"
-            android:text="编辑资料"
-           />
+            android:text="出生日期"
+            />
 
         <Button
             android:id="@+id/bt_back"
@@ -45,15 +45,41 @@
             />
     </RelativeLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:orientation="vertical"
+        android:layout_below="@+id/rl_8999"
         >
-    <include layout="@layout/useinfo_mail"/>
-    <include layout="@layout/userinfo_name"/>
+        <include layout="@layout/useinfo_birth"/>
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <NumberPicker
+                android:id="@+id/np_year"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="120dp">
+            </NumberPicker>
+            <NumberPicker
+                android:id="@+id/np_mon"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="120dp">
 
+            </NumberPicker>
+            <NumberPicker
+                android:id="@+id/np_day"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="120dp">
+            </NumberPicker>
+        </LinearLayout>
 
-</LinearLayout>
+    </RelativeLayout>
+   </RelativeLayout>

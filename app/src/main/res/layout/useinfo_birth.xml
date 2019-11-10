@@ -6,30 +6,29 @@
     android:background="#fff"
     android:layout_marginTop="15dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/rl_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="头像"
+            android:text="年龄"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"
             android:textColor="#000"
             android:textSize="20sp"
             />
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_age"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text=">"
-            android:textSize="25dp"
-            android:textColor="#c4c4c4"
-            android:layout_marginRight="12dp"
-           android:layout_marginTop="10dp"
-            />
-    </RelativeLayout>
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:textColor="#000"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,19 +37,22 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="邮箱"
+            android:text="星座"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"
             android:textColor="#000"
             android:textSize="20sp"
             />
-        <EditText
-            android:id="@+id/et_mail"
+        <TextView
+            android:id="@+id/tv_starMap"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:text="摩羯座"
             android:layout_marginTop="15dp"
-            android:hint="填入你的邮箱地址"
-            android:background="@null"
-            android:layout_marginLeft="25dp"/>
+            android:textColor="#000"
+            android:textSize="20sp"/>
+
     </LinearLayout>
+
 </LinearLayout>

@@ -4,12 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,9 +53,11 @@ public class CityFragment extends Fragment {
     private TextView mTVSport;
     private SharedPreferences.Editor mEditor;
     private SharedPreferences mSharedPreferences;
-    private ScrollView msvSync;
+    public ScrollView msvSync;
+    private int offset;
+    private Handler handler;
 
-  @SuppressLint("ValidFragment")
+  @SuppressLint("ValidFragment")   //handle作为参数
   public CityFragment(String cityId){
         this.cityId = cityId;
   }
@@ -67,7 +73,7 @@ public class CityFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-            mTVUpdateTime = view.findViewById(R.id.tv_updateTime);
+         mTVUpdateTime = view.findViewById(R.id.tv_updateTime);
          mTVNowTemperature=view.findViewById(R.id.tv_nowTemperature);
          mTVWeatherInfo=view.findViewById(R.id.tv_weather_info);
          mLLforecast=view.findViewById(R.id.ll_forecast);
@@ -97,9 +103,74 @@ public class CityFragment extends Fragment {
                     swipeRefreshLayout.setRefreshing(false);
                 }
             });
+        /**接收滑动偏移量*/  //等等试下在activity下接受偏移量  设置fragment的msvSync
 
+        handler=new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what){
+                    case 1:
+                        Bundle bundle = msg.getData();
+                        offset = bundle.getInt("offset");
+                        if(offset<0) offset=0;
+                       handler.post(new Runnable() {
+                           @Override
+                           public void run() {
+                               msvSync.scrollTo(0,offset);
+                           }
+                       });
+                        break;
+                }
+            }
+        };
+        /**发送消息 需要全部fragment响应*/ //现在就1个会响应
+        mTVAQI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {   //把偏移量发送过去处理
+                        Message message = new Message();
+                        message.what=1;
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("offset",300);
+                        message.setData(bundle);
+                        handler.sendMessage(message);
+                    }
+                }).start();
+            }
+        });
 
+        msvSync.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                offset=scrollY;
+               /* new Thread(new Runnable() {
+                    @Override
+                    public void run() {   //把偏移量发送过去处理
+                        Message message = new Message();
+                        message.what=1;
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("offset",offset);
+                        message.setData(bundle);
+                        handler.sendMessage(message);
+                    }
+                }).start();*/
+            }
+        });
     }
+
+  public void abc(final int offs){
+      if(offset<0) offset=0;
+      Log.d("","55asd5");
+      handler.post(new Runnable() {
+          @Override
+          public void run() {
+              msvSync.scrollTo(0,offs);
+          }
+      });
+  };
     public void requestWeather(final String weatherId){
         String url ="https://free-api.heweather.com/v5/weather?city="+weatherId+"&key=32d1c829ed7d483086f4f5b4d5947cef";
         OkhttpUtil.sendHttpRequest(url, new Callback() {
@@ -189,5 +260,11 @@ public class CityFragment extends Fragment {
                 mEditor.apply();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //ToastUtil.showMsg(getActivity(),"onResume");
     }
 }

@@ -30,6 +30,16 @@
             android:enabled="true"
             android:process=":remote" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.huhaichang.weather3.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppThemeTest" />
@@ -63,8 +73,15 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
             android:theme="@style/AppThemeTest" />
-        <activity android:name=".UserInfoActivity"
+        <activity
+            android:name=".userinfo.UserInfoActivity"
             android:theme="@style/AppThemeTest" />
+        <activity
+            android:name=".userinfo.TakePhotoActivity"
+            android:theme="@style/AppThemeTest" />
+        <activity android:name=".userinfo.BirthInfoActivity"
+            android:theme="@style/AppThemeTest"/>
+
     </application>
 
 </manifest>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#e6e6e6"
     android:orientation="vertical"
-    >
 
+    >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -19,8 +19,8 @@
             android:layout_centerInParent="true"
             android:textColor="#fff"
             android:textSize="20sp"
-            android:text="编辑资料"
-           />
+            android:text="编辑头像"
+            />
 
         <Button
             android:id="@+id/bt_back"
@@ -44,16 +44,29 @@
             android:background="@drawable/tv_1"
             />
     </RelativeLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/iv_photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/asdf"
+        android:layout_marginTop="20dp"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        />
+    </RelativeLayout>
+    <Button
+        android:id="@+id/bt_takePhoto"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical"
-        >
-    <include layout="@layout/useinfo_mail"/>
-    <include layout="@layout/userinfo_name"/>
-    </LinearLayout>
-
-
-
+        android:text="拍照"
+        android:layout_marginTop="20dp"/>
+    <Button
+        android:id="@+id/bt_choosePhoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="选择照片"
+        android:layout_marginTop="20dp"/>
 </LinearLayout>

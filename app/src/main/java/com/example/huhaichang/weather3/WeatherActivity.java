@@ -1,13 +1,15 @@
 package com.example.huhaichang.weather3;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -17,7 +19,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,21 +31,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.huhaichang.weather3.gson.Forecast;
-import com.example.huhaichang.weather3.gson.Weather;
 import com.example.huhaichang.weather3.managecity.ADDActivity;
 import com.example.huhaichang.weather3.managecity.DeleteActivity;
-import com.example.huhaichang.weather3.service.MyService;
 import com.example.huhaichang.weather3.tanqiu.TanqiuActivity;
+import com.example.huhaichang.weather3.userinfo.UserInfoActivity;
 import com.example.huhaichang.weather3.widget.MFragmentPagerAdapter;
 import com.example.huhaichang.weather3.widget.OkhttpUtil;
 import com.example.huhaichang.weather3.widget.ToastUtil;
-import com.example.huhaichang.weather3.widget.Utility;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,7 +57,8 @@ public class WeatherActivity extends AppCompatActivity {
     private Button mBtGoCity;
     private TextView mTVCityName;
     private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor mEditor,editor;
+    private SharedPreferences.Editor mEditor,editor;//editor管理滑动点
+    private SharedPreferences photoSharedPreferences;//管理照片路径
     private ImageView mIVBackground,mIVDingWei;
     private ImageView mIVFly;  //蝴蝶
     private String mWeatherId;
@@ -79,6 +77,7 @@ public class WeatherActivity extends AppCompatActivity {
     private String a,b,c,d;   //存入城市id
     private String as,bs,cs,ds;   //存入城市名
     private String mail,name;//存入个人信息
+    private ImageView mIVPhoto;
     private int page;//记录退出时页数
 
     private boolean ischange; //如果定位信息发生改变回到GPSActivity(延时3s执行毕竟定位需要时间)
@@ -87,7 +86,9 @@ public class WeatherActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private TextView mTVMail,mTVName;
     private ImageView mIvSet;
-
+    private CityFragment cityFragmentlocal,cityFragmenta,cityFragmentb,cityFragmentc,cityFragmentd;
+    private Handler handlerfragment; //全局handler获取偏移量  在通过activity去设置偏移
+    private  int offset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,7 @@ public class WeatherActivity extends AppCompatActivity {
         mTVMail = view.findViewById(R.id.mail);
         mTVName = view.findViewById(R.id.name);
         mIvSet = view.findViewById(R.id.iv_set);
+        mIVPhoto = view.findViewById(R.id.iv_photo_header);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mSharedPreferences.edit();
@@ -129,12 +131,7 @@ public class WeatherActivity extends AppCompatActivity {
         page = sharedPreferences.getInt("qww",0);//退出时页数
         name =mSharedPreferences.getString("userName", "");
         mail =mSharedPreferences.getString("userMail", "");//用户名邮件
-        Intent intent = getIntent();
-        String ifopen = intent.getStringExtra("openDraw");
-        if(ifopen!=null){
-            drawerLayout.openDrawer(GravityCompat.START);
-        }
-
+        /**滑动ui*/
         if(!mail.equals("")){
             mTVMail.setText(mail);
             mTVName.setText(name);
@@ -143,6 +140,7 @@ public class WeatherActivity extends AppCompatActivity {
             mTVMail.setText("123456789@qq.com");
         }
 
+        /**个人信息设置*/
         mIvSet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,18 +173,42 @@ public class WeatherActivity extends AppCompatActivity {
         mTVCityName.setText(sharedPreferences.getString(""+page+page, ""));
         }
         /**拿给viewpaper的fragment*/
-        fragmentArrayList.add(new CityFragment(mWeatherId));
+        //先获取偏移量监听
+       /* handlerfragment = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what){
+                    case 1:
+                        Bundle bundle = msg.getData();
+                        offset = bundle.getInt("offset");
+                        if(offset<0) offset=0;
+                        cityFragmentlocal.abc(offset);
+                        if(cityFragmenta!=null){cityFragmenta.abc(offset);}
+                        if(cityFragmentb!=null){cityFragmentb.abc(offset);}
+                        if(cityFragmentc!=null){cityFragmentc.abc(offset);}
+                        if(cityFragmentd!=null){cityFragmentd.abc(offset);}
+                        break;
+                }
+            }
+        };*/
+        cityFragmentlocal = new CityFragment(mWeatherId);
+        fragmentArrayList.add(cityFragmentlocal);
         if(!sharedPreferences.getString("1","").equals("")) {
-            fragmentArrayList.add(new CityFragment(a));
+            cityFragmenta = new CityFragment(a);
+            fragmentArrayList.add(cityFragmenta);
         }
         if(!sharedPreferences.getString("2","").equals("")) {
-            fragmentArrayList.add(new CityFragment(b));
+            cityFragmentb = new CityFragment(b);
+            fragmentArrayList.add(cityFragmentb);
         }
         if(!sharedPreferences.getString("3","").equals("")) {
-            fragmentArrayList.add(new CityFragment(c));
+           cityFragmentc = new CityFragment(c);
+            fragmentArrayList.add(cityFragmentc);
         }
         if(!sharedPreferences.getString("4","").equals("")) {
-            fragmentArrayList.add(new CityFragment(d));
+            cityFragmentd = new CityFragment(d);
+            fragmentArrayList.add(cityFragmentd);
         }
         fragmentManager = getSupportFragmentManager();
         mViewPager.setAdapter(new MFragmentPagerAdapter(fragmentManager, fragmentArrayList));
@@ -212,49 +234,19 @@ public class WeatherActivity extends AppCompatActivity {
         mViewPager.setCurrentItem(page);//设置初始显示位置
         mViewPager.setOffscreenPageLimit(4);
         mViewPager.setOnPageChangeListener(new My1OnPageChangeListener());
+        /***/
 
         /**添加删除City*/
         mBtGoCity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              /*  View view = LayoutInflater.from(WeatherActivity.this).inflate(R.layout.layout_popup_window,null);
-                TextView add =view.findViewById(R.id.tv_add);
-                final TextView delete =view.findViewById(R.id.tv_delete);
-                delete.setVisibility(View.VISIBLE);
-                if(a.equals("")&&b.equals("")&&c.equals("")&&d.equals("")) {
-                    delete.setVisibility(View.GONE);
-                }//只有1个就不显示删除按钮
-                add.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(a.equals("")||b.equals("")||c.equals("")||d.equals("")){  //存在空
-                            Intent intent = new Intent(WeatherActivity.this,ADDActivity.class);
-                            startActivity(intent);
-                        }else{
-                            ToastUtil.showMsg(WeatherActivity.this,"最大上限为5");
-                        }
-                        mpopupWindow.dismiss();
-                    }
-                });
-                delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                            Intent intent = new Intent(WeatherActivity.this, DeleteActivity.class);
-                            startActivity(intent);
-                        mpopupWindow.dismiss();
-                    }
-                });
-                mpopupWindow =new PopupWindow(view,mBtGoCity.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
-                mpopupWindow.setOutsideTouchable(true);
-                mpopupWindow.setFocusable(true);
-                mpopupWindow.showAsDropDown(mBtGoCity);*/
               drawerLayout.openDrawer(GravityCompat.START);
 
     }
 });
         /**定位改变 重新加载app*/
         final boolean mycity = mSharedPreferences.getBoolean("noCity",false);
-        Handler handler = new Handler();
+        final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -294,6 +286,13 @@ public class WeatherActivity extends AppCompatActivity {
                 mpopupWindow.setOutsideTouchable(true);
                 mpopupWindow.setFocusable(true);
                 mpopupWindow.showAsDropDown(mIVFly,0,10);
+               /* Handler handler1 = new Handler();
+                handler1.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        cityFragmentb.abc(300);//当有滑动消息时响应
+                    }
+                });*/
             }
         });
 
@@ -443,9 +442,33 @@ public class WeatherActivity extends AppCompatActivity {
             pointList.get(i).setBackgroundResource(R.drawable.yuandian1);
         }
     }
+
 //服务不开了
   /*  private void showWeatherInfo(Weather weather){
         Intent intent = new Intent(WeatherActivity.this,MyService.class);//不开服务
         startService(intent);
     }*/
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        photoSharedPreferences =getSharedPreferences("savePhotoPath",MODE_PRIVATE);
+        Boolean t = photoSharedPreferences.getBoolean("read",false);
+        if(t){
+            String caremaPath = photoSharedPreferences.getString("camera","");
+            String albumPath =photoSharedPreferences.getString("photoPath", "");
+
+            //是从相册里保存
+            if(caremaPath.equals("")) {
+                Bitmap bitmap1 = BitmapFactory.decodeFile(albumPath);
+                mIVPhoto.setImageBitmap(bitmap1);
+
+            }
+            //保存拍的照片
+            if(albumPath.equals("")){
+                Bitmap bitmap1 = BitmapFactory.decodeFile(caremaPath);
+                mIVPhoto.setImageBitmap(bitmap1);
+            }
+        }
+    }
 }

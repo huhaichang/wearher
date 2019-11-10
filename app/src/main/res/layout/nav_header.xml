@@ -5,6 +5,7 @@
     android:padding="10dp"
     android:background="?attr/colorPrimary">
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_photo_header"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:src="@drawable/asdf"
